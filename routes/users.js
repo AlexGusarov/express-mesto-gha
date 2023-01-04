@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
-const bodyParser = require('body-parser');
-const { getUsers, createUser, getUserById } = require('../controllers/users')
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
+const { getUsers, createUser, getUserById, updateUser, updateAvatar } = require('../controllers/users')
+
 router.get('/', getUsers);
-
-router.get('/:userId', getUserById)
-
-router.post('/', express.json(), createUser);
+router.get('/:userId', getUserById);
+router.post('/', createUser);
+router.patch('/me', updateUser);
+router.patch('/me/avatar', updateAvatar);
 
 module.exports = router;
