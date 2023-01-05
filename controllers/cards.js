@@ -2,13 +2,18 @@ const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then(cards => res.status(200).send({ data: cards }))
+    .then(cards => res.status(200).send(cards))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 }
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
-    .then(card => res.status(200).send({ data: card }))
+    .then(card => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка с таким id не найдена' })
+      }
+      res.status(200).send(card)
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 }
 
@@ -17,7 +22,12 @@ const createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner })
     .then(card => res.status(201).send(card))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
+      }
+      res.status(500).send({ message: 'Произошла ошибка' })
+    });;
 }
 
 
@@ -28,6 +38,19 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .populate(['owner', 'likes'])
+    .then(card => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка с таким id не найдена' })
+      }
+      res.status(200).send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Невалидный id' })
+      }
+      res.status(500).send({ message: 'Произошла ошибка' })
+    });
+
 }
 
 
@@ -39,6 +62,18 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .populate(['owner', 'likes'])
+    .then(card => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка с таким id не найдена' })
+      }
+      res.status(200).send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Невалидный id' })
+      }
+      res.status(500).send({ message: 'Произошла ошибка' })
+    });
 };
 
 module.exports = {

@@ -49,7 +49,6 @@ const updateUser = (req, res) => {
       res.send(user)
     })
     .catch((err) => {
-      console.log(err.name)
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' })
       }
