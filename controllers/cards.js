@@ -10,6 +10,7 @@ const {
 } = require('../constants');
 
 const getCards = (req, res) => {
+  console.log(OK_CODE);
   Card.find({})
     .then((cards) => res.status(OK_CODE).send(cards))
     .catch(() => res.status(ERROR_CODE).send({ message: 'Произошла ошибка' }));
