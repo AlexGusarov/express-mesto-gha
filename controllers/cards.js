@@ -27,7 +27,10 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
 }
+
+
 
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
@@ -35,6 +38,7 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
 };
 
 module.exports = {
