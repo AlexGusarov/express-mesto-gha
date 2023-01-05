@@ -1,16 +1,15 @@
 {
-  "name": "mesto-back",
+  "name": "express-mesto-gha",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server on Express.js with MongoDB. Backend for Mesto project",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Alexey Gusarov",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.30.0",
