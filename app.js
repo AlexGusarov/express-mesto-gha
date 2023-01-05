@@ -1,8 +1,7 @@
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
-
-
+const process = require('process');
 const app = express();
 const { PORT = 3000 } = process.env;
 
@@ -24,15 +23,23 @@ mongoose.set('strictQuery', false);
 
 
 async function connect() {
-  await mongoose.connect('mongodb://localhost:27017/mestodb', {
-    useNewUrlParser: true,
-  });
-  console.log(`Server connected to Mongo`)
+  try {
+    await mongoose.connect('mongodb://localhost:27017/mestodb', {
+      useNewUrlParser: true,
+    });
+    console.log(`Server connected to Mongo`)
 
-  await app.listen(PORT);
-  console.log(`Server listening ${PORT}`)
+    await app.listen(PORT);
+    console.log(`Server listening ${PORT}`)
+
+  } catch (err) { console.log(`Произошла ошибка ${err.name} - ${err.message}`) }
+
 }
 
 connect();
 
+process.on('uncaughtException', (err, origin) => {
+  console.log(`${origin} ${err.name} c текстом ${err.message} не была обработана`);
+})
+throw new Error(`Ошибка, которую мы пропустили`);
 
