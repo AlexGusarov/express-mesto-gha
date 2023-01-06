@@ -8,11 +8,9 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-// const { NOTFOUND_CODE } = require('./constants');
+const { NOTFOUND_CODE } = require('./constants');
 
 app.use(express.json());
-
-// app.use(express.urlencoded());
 
 app.use((req, res, next) => {
   req.user = {
@@ -25,10 +23,9 @@ app.use('/cards', require('./routes/cards'));
 
 app.use('/users', require('./routes/users'));
 
-// app.use('*', (req, res, next) => {
-//   res.status(NOTFOUND_CODE).send({ message: 'Страница не найдена' });
-//   next();
-// });
+app.use('*', (req, res) => {
+  res.status(NOTFOUND_CODE).send({ message: 'Страница не найдена' });
+});
 
 mongoose.set('strictQuery', false);
 

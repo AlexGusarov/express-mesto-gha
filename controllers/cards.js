@@ -23,7 +23,12 @@ const deleteCard = (req, res) => {
       }
       res.status(OK_CODE).send({ message: 'Карточка удалена' });
     })
-    .catch(() => res.status(ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BADREQUEST_CODE).send({ message: 'Некорректный id карточки' });
+      }
+      res.status(ERROR_CODE).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const createCard = (req, res) => {
