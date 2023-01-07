@@ -1,4 +1,5 @@
 /* eslint-disable consistent-return */
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const {
@@ -33,8 +34,16 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name, about, avatar, email, password: hash,
+      })
+    }
+    )
     .then((user) => res.status(CREATE_CODE).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
