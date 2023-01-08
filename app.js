@@ -27,6 +27,10 @@ app.use('/cards', require('./routes/cards'));
 
 app.use('/users', require('./routes/users'));
 
+app.post('/signin', require('./routes/signin'));
+
+app.post('/signup', require('./routes/signup'));
+
 app.use('*', (req, res) => {
   res.status(NOTFOUND_CODE).send({ message: 'Страница не найдена' });
 });
