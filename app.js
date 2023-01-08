@@ -2,6 +2,8 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
+const cookieParser = require('cookie-parser');
+
 const process = require('process');
 
 const app = express();
@@ -9,6 +11,8 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 const { NOTFOUND_CODE } = require('./constants');
+
+app.use(cookieParser());
 
 app.use(express.json());
 

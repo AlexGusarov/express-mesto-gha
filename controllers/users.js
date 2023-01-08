@@ -1,5 +1,6 @@
 /* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const {
@@ -41,9 +42,8 @@ const createUser = (req, res) => {
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
-      })
-    }
-    )
+      });
+    })
     .then((user) => res.status(CREATE_CODE).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -87,10 +87,40 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Что-то не так с паролем или с почтой'));
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+    })
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'e899105dc15b4e016e69ae003cfb63c0062af09c43b92f0d861177e764810ebc',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      }).end();
+    })
+    .catch();
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   updateAvatar,
+  login,
 };
