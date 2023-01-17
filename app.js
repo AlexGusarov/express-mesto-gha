@@ -12,24 +12,21 @@ const { PORT = 3000 } = process.env;
 
 const { NOTFOUND_CODE } = require('./constants');
 
+const auth = require('./middlewares/auth');
+
+const errorsHandler = require('./middlewares/errorsHandler');
+
 app.use(cookieParser());
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63b32a890ab5f7bf976a2edc',
-  };
-  next();
-});
+app.use('/signin', require('./routes/signin'));
 
-app.use('/cards', require('./routes/cards'));
+app.use('/signup', require('./routes/signup'));
 
-app.use('/users', require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
-app.post('/signin', require('./routes/signin'));
-
-app.post('/signup', require('./routes/signup'));
+app.use('/users', auth, require('./routes/users'));
 
 app.use('*', (req, res) => {
   res.status(NOTFOUND_CODE).send({ message: 'Страница не найдена' });
@@ -52,3 +49,5 @@ async function connect() {
 }
 
 connect();
+
+app.use(errorsHandler);

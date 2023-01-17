@@ -1,5 +1,6 @@
-/* eslint-disable consistent-return */
 const Card = require('../models/card');
+const BadRequestError = require('../errors/BadRequetError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const {
   BADREQUEST_CODE,
@@ -9,38 +10,41 @@ const {
   CREATE_CODE,
 } = require('../constants');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(OK_CODE).send(cards))
-    .catch(() => res.status(ERROR_CODE).send({ message: 'Произошла ошибка' }));
+    .catch((err) => next(err));
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(NOTFOUND_CODE).send({ message: 'Карточка с таким id не найдена' });
+        return Promise.reject(new NotFoundError('Карточка c таким id не найдена'));
+      }
+      if (card.owner !== req.user._id) {
+        return Promise.reject(new BadRequestError('Можно удалять только свои карточки'));
       }
       res.status(OK_CODE).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BADREQUEST_CODE).send({ message: 'Некорректный id карточки' });
+        return Promise.reject(new BadRequestError('Некорректный id карточки'));
       }
-      res.status(ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
     .then((card) => res.status(CREATE_CODE).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(BADREQUEST_CODE).send({ message: 'Переданы некорректные данные' });
+        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
       }
-      res.status(ERROR_CODE).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 

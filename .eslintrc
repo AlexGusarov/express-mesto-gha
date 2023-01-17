@@ -18,6 +18,9 @@
         ]
       }
     ],
+    "consistent-return": [
+      "off"
+    ],
     "linebreak-style": 0
   }
 }
