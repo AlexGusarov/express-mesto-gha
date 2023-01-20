@@ -1,10 +1,10 @@
-/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequetError');
 const ConflictError = require('../errors/ConflictError');
 const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const { OK_CODE, CREATE_CODE } = require('../constants');
 
@@ -88,16 +88,21 @@ const login = async (req, res, next) => {
   try {
     console.log(req.body, 'login');
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new UnauthorizedError('Неправильный логин или пароль');
+    }
+
     const user = await User.findOne({ email }).select('+password');
     console.log(user, 'user');
 
     if (!user) {
-      throw new BadRequestError('Что-то не так с паролем или с почтой');
+      throw new UnauthorizedError('Неправильный логин или пароль');
     } else {
-      const matched = bcrypt.compare(password, user.password);
+      const matched = await bcrypt.compare(password, user.password);
 
       if (!matched) {
-        throw new BadRequestError('Неправильные почта или пароль');
+        throw new UnauthorizedError('Неправильный логин или пароль');
       } else {
         const token = jwt.sign(
           { _id: user._id },
@@ -118,7 +123,7 @@ const login = async (req, res, next) => {
     if (err.name === 'ValidatorError') {
       throw new BadRequestError('Что-то не так с почтой или паролем');
     }
-    console.log(err);
+
     next(err);
   }
 };

@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 
 const process = require('process');
 
+const { errors } = require('celebrate');
+
 const app = express();
 
 const { PORT = 3000 } = process.env;
@@ -49,5 +51,7 @@ async function connect() {
 }
 
 connect();
+
+app.use(errors());
 
 app.use(errorsHandler);
