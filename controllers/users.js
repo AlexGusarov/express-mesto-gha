@@ -109,10 +109,7 @@ const login = async (req, res, next) => {
           'e899105dc15b4e016e69ae003cfb63c0062af09c43b92f0d861177e764810ebc',
           { expiresIn: '7d' },
         );
-        res.cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        }).end();
+        return res.status(OK_CODE).send({ token });
       }
     }
   } catch (err) {
