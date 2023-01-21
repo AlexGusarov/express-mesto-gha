@@ -14,7 +14,7 @@ const { PORT = 3000 } = process.env;
 
 const { NOTFOUND_CODE } = require('./constants');
 
-const auth = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 
 const errorsHandler = require('./middlewares/errorsHandler');
 
