@@ -106,9 +106,10 @@ const login = async (req, res, next) => {
       } else {
         const token = jwt.sign(
           { _id: user._id },
-          'e899105dc15b4e016e69ae003cfb63c0062af09c43b92f0d861177e764810ebc',
+          'top-secret',
           { expiresIn: '7d' },
         );
+        console.log('token in login  ', token);
         return res.status(OK_CODE).send({ token });
       }
     }

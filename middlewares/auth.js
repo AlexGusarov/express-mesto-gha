@@ -16,15 +16,14 @@ const auth = (req, res, next) => {
     console.log('Запускаем мидлвер аутентификации');
 
     console.log('внутри try');
-    payload = jwt.verify(
-      token,
-      'e899105dc15b4e016e69ae003cfb63c0062af09c43b92f0d861177e764810ebc',
-    );
+    console.log(token, 'token');
+    payload = jwt.verify(token, 'top-secret');
+
+    console.log(payload, 'payload');
   } catch (err) {
+    console.log(payload, 'payload2');
     return res.status(401).send({ message: 'Необходима авторизация' });
   }
-
-  console.log(payload, 'payload');
 
   req.user = payload;
 
