@@ -25,7 +25,7 @@ const getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return Promise.reject(new BadRequestError('Невалидный id'));
+        throw new BadRequestError('Невалидный id');
       }
       next(err);
     });
