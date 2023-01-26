@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const validator = require('validator');
 
 const validateCreatingCard = () => {
   celebrate({
@@ -24,7 +25,11 @@ const validateCardId = () => {
 const validateUserAuth = celebrate({
   body: Joi.object()
     .keys({
-      email: Joi.string().required(),
+      email: Joi.string().required().custom((value) => {
+        if (validator.isEmail(value)) {
+          return value;
+        }
+      }),
       password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
