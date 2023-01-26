@@ -31,23 +31,24 @@ const getUserById = (req, res, next) => {
     });
 };
 
-const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name, about, avatar, email, password: hash,
-      });
-    })
-    .then((user) => res.status(CREATE_CODE).send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
-      }
-      next(err);
+const createUser = async (req, res, next) => {
+  try {
+    const {
+      name, about, avatar, email, password,
+    } = req.body;
+
+    const hash = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name, about, avatar, email, password: hash,
     });
+    res.status(CREATE_CODE).send(user);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+    }
+    next(err);
+  }
 };
 
 const updateUser = (req, res, next) => {
