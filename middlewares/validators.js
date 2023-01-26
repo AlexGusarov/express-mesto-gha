@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
+const httpRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%.~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_.~#?&=]*)$/;
+
 const validateCreatingCard = () => {
   celebrate({
     body: Joi.object()
@@ -28,7 +30,7 @@ const validateUserAuth = celebrate({
       password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().uri(),
+      avatar: Joi.string().regex(httpRegex).required(),
     })
     .unknown(),
 });
