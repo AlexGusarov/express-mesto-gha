@@ -33,6 +33,11 @@ const validateUserAuth = celebrate({
       password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
+      avatar: Joi.string().custom((value) => {
+        if (validator.isURL(value)) {
+          return value;
+        }
+      }),
     })
     .unknown(),
 });
