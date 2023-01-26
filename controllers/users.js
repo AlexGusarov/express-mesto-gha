@@ -42,7 +42,12 @@ const createUser = async (req, res, next) => {
     const user = await User.create({
       name, about, avatar, email, password: hash,
     });
-    res.status(CREATE_CODE).send(user);
+    res.status(CREATE_CODE).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    });
   } catch (err) {
     if (err.name === 'ValidationError') {
       return Promise.reject(new BadRequestError('Переданы некорректные данные'));
