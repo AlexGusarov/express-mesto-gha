@@ -37,9 +37,12 @@ const createUser = async (req, res, next) => {
       name, about, avatar, email, password,
     } = req.body;
 
+    let user = await User.findOne({ email });
+    if (user) return res.status(OK_CODE).send('Пользователь уже зарегистрирован');
+
     const hash = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    user = await User.create({
       name, about, avatar, email, password: hash,
     });
     res.status(CREATE_CODE).send({
@@ -50,7 +53,7 @@ const createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+      throw new BadRequestError('Переданы некорректные данные');
     }
     next(err);
   }
