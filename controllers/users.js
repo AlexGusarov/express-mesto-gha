@@ -38,7 +38,9 @@ const createUser = async (req, res, next) => {
     } = req.body;
 
     let user = await User.findOne({ email });
-    if (user) return res.status(OK_CODE).send('Пользователь уже зарегистрирован');
+    if (user) {
+      throw new ConflictError('Пользователь уже зарегистрирован');
+    }
 
     const hash = await bcrypt.hash(password, 10);
 
