@@ -92,7 +92,6 @@ const updateAvatar = (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    console.log(req.body, 'login');
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -100,7 +99,6 @@ const login = async (req, res, next) => {
     }
 
     const user = await User.findOne({ email }).select('+password');
-    console.log(user, 'user');
 
     if (!user) {
       throw new UnauthorizedError('Неправильный логин или пароль');
@@ -115,7 +113,7 @@ const login = async (req, res, next) => {
           'top-secret',
           { expiresIn: '7d' },
         );
-        console.log('token in login  ', token);
+
         return res.status(OK_CODE).send({ token });
       }
     }

@@ -56,7 +56,7 @@ const validateUserUpdate = celebrate({
 const validateUserID = celebrate({
   params: Joi.object()
     .keys({
-      userId: Joi.string().required(),
+      userId: Joi.string().guid().required(),
     })
     .unknown(),
 });
