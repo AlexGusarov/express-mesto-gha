@@ -23,7 +23,8 @@ const deleteCard = (req, res, next) => {
       if (!card) {
         return Promise.reject(new NotFoundError('Карточка c таким id не найдена'));
       }
-      if (card.owner !== req.user._id) {
+
+      if (!card.owner.equals(req.user._id)) {
         return Promise.reject(new Forbidden('Можно удалять только свои карточки'));
       }
       card.delete();
