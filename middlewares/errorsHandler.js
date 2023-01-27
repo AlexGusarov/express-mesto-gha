@@ -1,5 +1,4 @@
 const errorsHandler = (err, req, res, next) => {
-  console.log('Запускаем обработчик ошибок');
   const { statusCode = 500, message } = err;
 
   res.status(statusCode).send({

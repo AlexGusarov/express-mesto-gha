@@ -3,13 +3,7 @@ const BadRequestError = require('../errors/BadRequetError');
 const NotFoundError = require('../errors/NotFoundError');
 const Forbidden = require('../errors/Forbidden');
 
-const {
-  BADREQUEST_CODE,
-  NOTFOUND_CODE,
-  ERROR_CODE,
-  OK_CODE,
-  CREATE_CODE,
-} = require('../constants');
+const { OK_CODE, CREATE_CODE } = require('../constants');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -39,12 +33,10 @@ const deleteCard = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
-  console.log('create card');
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
     .then((card) => {
-      console.log(card, 'card');
       res.status(CREATE_CODE).send(card);
     })
     .catch((err) => {
@@ -55,7 +47,7 @@ const createCard = (req, res, next) => {
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -63,19 +55,20 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(NOTFOUND_CODE).send({ message: 'Карточка с таким id не найдена' });
+        throw new NotFoundError('Карточка с таким id не найдена');
       }
       res.status(OK_CODE).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BADREQUEST_CODE).send({ message: 'Невалидный id' });
+        throw new BadRequestError('Невалидный id');
       }
-      res.status(ERROR_CODE).send({ message: 'Произошла ошибка' });
+
+      next(err);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -83,15 +76,16 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(NOTFOUND_CODE).send({ message: 'Карточка с таким id не найдена' });
+        throw new NotFoundError('Карточка с таким id не найдена');
       }
       res.status(OK_CODE).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(BADREQUEST_CODE).send({ message: 'Невалидный id' });
+        throw new BadRequestError('Невалидный id');
       }
-      res.status(ERROR_CODE).send({ message: 'Произошла ошибка' });
+
+      next(err);
     });
 };
 

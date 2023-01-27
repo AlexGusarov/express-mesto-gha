@@ -1,6 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
-
-const httpRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+const { httpRegex } = require('../constants');
 
 const validateCreatingCard = celebrate({
   body: Joi.object()
