@@ -36,10 +36,14 @@ const deleteCard = (req, res, next) => {
 };
 
 const createCard = (req, res, next) => {
+  console.log('create card');
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
-    .then((card) => res.status(CREATE_CODE).send(card))
+    .then((card) => {
+      console.log(card, 'card');
+      res.status(CREATE_CODE).send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return Promise.reject(new BadRequestError('Переданы некорректные данные'));

@@ -2,26 +2,22 @@ const { celebrate, Joi } = require('celebrate');
 
 const httpRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
 
-const validateCreatingCard = () => {
-  celebrate({
-    body: Joi.object()
-      .keys({
-        name: Joi.string().required().min(2).max(30),
-        link: Joi.string().required(),
-      })
-      .unknown(),
-  });
-};
+const validateCreatingCard = celebrate({
+  body: Joi.object()
+    .keys({
+      name: Joi.string().required().min(2).max(30),
+      link: Joi.string().required().regex(httpRegex),
+    })
+    .unknown(),
+});
 
-const validateCardId = () => {
-  celebrate({
-    params: Joi.object()
-      .keys({
-        cardId: Joi.string().required(),
-      })
-      .unknown(),
-  });
-};
+const validateCardId = celebrate({
+  params: Joi.object()
+    .keys({
+      cardId: Joi.string().required(),
+    })
+    .unknown(),
+});
 
 const validateUserAuth = celebrate({
   body: Joi.object()
