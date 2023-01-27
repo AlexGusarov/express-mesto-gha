@@ -14,7 +14,7 @@ const validateCreatingCard = celebrate({
 const validateCardId = celebrate({
   params: Joi.object()
     .keys({
-      cardId: Joi.string().required(),
+      cardId: Joi.string().required().hex(),
     })
     .unknown(),
 });
