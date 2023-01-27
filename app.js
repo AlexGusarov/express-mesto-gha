@@ -8,6 +8,8 @@ const process = require('process');
 
 const { errors } = require('celebrate');
 
+const rateLimit = require('express-rate-limit');
+
 const app = express();
 
 const { PORT = 3000 } = process.env;
@@ -17,6 +19,13 @@ const { NOTFOUND_CODE } = require('./constants');
 const { auth } = require('./middlewares/auth');
 
 const errorsHandler = require('./middlewares/errorsHandler');
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 app.use(cookieParser());
 
