@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequetError');
 const NotFoundError = require('../errors/NotFoundError');
+const Forbidden = require('../errors/Forbidden');
 
 const {
   BADREQUEST_CODE,
@@ -23,7 +24,7 @@ const deleteCard = (req, res, next) => {
         return Promise.reject(new NotFoundError('Карточка c таким id не найдена'));
       }
       if (card.owner !== req.user._id) {
-        return Promise.reject(new BadRequestError('Можно удалять только свои карточки'));
+        return Promise.reject(new Forbidden('Можно удалять только свои карточки'));
       }
       res.status(OK_CODE).send({ message: 'Карточка удалена' });
     })
