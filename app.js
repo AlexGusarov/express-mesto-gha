@@ -10,7 +10,7 @@ const { errors } = require('celebrate');
 
 const rateLimit = require('express-rate-limit');
 
-const app = express();
+const helmet = require('helmet');
 
 const { PORT = 3000 } = process.env;
 
@@ -26,6 +26,12 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+const app = express();
+
+app.use(limiter);
+
+app.use(helmet());
 
 app.use(cookieParser());
 
