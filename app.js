@@ -14,7 +14,7 @@ const helmet = require('helmet');
 
 const { PORT = 3000 } = process.env;
 
-const { NOTFOUND_CODE } = require('./constants');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { auth } = require('./middlewares/auth');
 
@@ -45,8 +45,8 @@ app.use('/cards', auth, require('./routes/cards'));
 
 app.use('/users', auth, require('./routes/users'));
 
-app.use('*', (req, res) => {
-  res.status(NOTFOUND_CODE).send({ message: 'Страница не найдена' });
+app.use('*', auth, (req, res, next) => {
+  next(new NotFoundError('Страница не найдена'));
 });
 
 mongoose.set('strictQuery', false);

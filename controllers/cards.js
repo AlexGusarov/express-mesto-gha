@@ -26,7 +26,7 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return Promise.reject(new BadRequestError('Некорректный id карточки'));
+        return next(new BadRequestError('Некорректный id карточки'));
       }
       next(err);
     });
@@ -41,7 +41,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       next(err);
     });
@@ -61,7 +61,7 @@ const likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Невалидный id');
+        return next(new BadRequestError('Невалидный id'));
       }
 
       next(err);
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Невалидный id');
+        return next(new BadRequestError('Невалидный id'));
       }
 
       next(err);

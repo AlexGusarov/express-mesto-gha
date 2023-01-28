@@ -25,7 +25,7 @@ const getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Невалидный id');
+        return next(new BadRequestError('Невалидный id'));
       }
       next(err);
     });
@@ -55,7 +55,7 @@ const createUser = async (req, res, next) => {
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      throw new BadRequestError('Переданы некорректные данные');
+      return next(new BadRequestError('Переданы некорректные данные'));
     }
     next(err);
   }
@@ -72,7 +72,7 @@ const updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       next(err);
     });
@@ -89,7 +89,7 @@ const updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return Promise.reject(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError('Переданы некорректные данные'));
       }
       next(err);
     });
@@ -124,11 +124,11 @@ const login = async (req, res, next) => {
     }
   } catch (err) {
     if (err.code === 11000) {
-      throw new ConflictError('Пользователь с такой почтой уже зарегистрирован');
+      return next(ConflictError('Пользователь с такой почтой уже зарегистрирован'));
     }
 
     if (err.name === 'ValidatorError') {
-      throw new BadRequestError('Что-то не так с почтой или паролем');
+      return next(BadRequestError('Что-то не так с почтой или паролем'));
     }
 
     next(err);
