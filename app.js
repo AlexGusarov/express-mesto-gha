@@ -2,8 +2,6 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const cookieParser = require('cookie-parser');
-
 const process = require('process');
 
 const { errors } = require('celebrate');
@@ -32,8 +30,6 @@ const app = express();
 app.use(limiter);
 
 app.use(helmet());
-
-app.use(cookieParser());
 
 app.use(express.json());
 
