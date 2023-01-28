@@ -39,6 +39,8 @@ const createUser = async (req, res, next) => {
 
     const hash = await bcrypt.hash(password, 10);
 
+    User.init();
+
     const user = await User.create({
       name, about, avatar, email, password: hash,
     });
@@ -49,7 +51,7 @@ const createUser = async (req, res, next) => {
       email: user.email,
     });
   } catch (err) {
-    if (err.name === 11000) {
+    if (err.code === 11000) {
       return next(new ConflictError('Пользователь уже зарегистрирован'));
     }
     if (err.name === 'ValidationError') {
