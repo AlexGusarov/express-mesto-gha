@@ -37,14 +37,9 @@ const createUser = async (req, res, next) => {
       name, about, avatar, email, password,
     } = req.body;
 
-    let user = await User.findOne({ email });
-    if (user) {
-      throw new ConflictError('Пользователь уже зарегистрирован');
-    }
-
     const hash = await bcrypt.hash(password, 10);
 
-    user = await User.create({
+    const user = await User.create({
       name, about, avatar, email, password: hash,
     });
     res.status(CREATE_CODE).send({
@@ -54,6 +49,9 @@ const createUser = async (req, res, next) => {
       email: user.email,
     });
   } catch (err) {
+    if (err.name === 11000) {
+      return next(new ConflictError('Пользователь уже зарегистрирован'));
+    }
     if (err.name === 'ValidationError') {
       return next(new BadRequestError('Переданы некорректные данные'));
     }
@@ -123,14 +121,6 @@ const login = async (req, res, next) => {
       }
     }
   } catch (err) {
-    if (err.code === 11000) {
-      return next(ConflictError('Пользователь с такой почтой уже зарегистрирован'));
-    }
-
-    if (err.name === 'ValidatorError') {
-      return next(BadRequestError('Что-то не так с почтой или паролем'));
-    }
-
     next(err);
   }
 };
