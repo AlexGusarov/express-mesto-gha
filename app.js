@@ -10,6 +10,8 @@ const rateLimit = require('express-rate-limit');
 
 const helmet = require('helmet');
 
+const cors = require('cors');
+
 const { PORT = 3000 } = process.env;
 
 const NotFoundError = require('./errors/NotFoundError');
@@ -26,6 +28,8 @@ const limiter = rateLimit({
 });
 
 const app = express();
+
+app.use(cors());
 
 app.use(limiter);
 
